@@ -1,0 +1,217 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>OLD Pilotage</title>
+<style>
+:root{--g:#125b3d;--g2:#198754;--bg:#f3f7f4;--line:#dbe7df;--txt:#173629;--mut:#6b7b72}
+*{box-sizing:border-box}
+body{margin:0;font-family:system-ui,Arial;background:var(--bg);color:var(--txt)}
+header{background:linear-gradient(120deg,#0c4630,#16704a);color:#fff;padding:14px 16px;position:sticky;top:0;z-index:10}
+.brand{font-weight:800;font-size:19px}
+.brand small{display:block;font-size:11px;font-weight:500;opacity:.8}
+.nav{display:flex;gap:4px;background:#fff;border-bottom:1px solid var(--line);padding:5px;overflow:auto;position:sticky;top:61px;z-index:9}
+.nav button{border:0;background:#fff;border-radius:8px;padding:9px 12px;color:var(--txt);font-weight:700;white-space:nowrap}
+.nav button.on{background:#e4f2e9;color:var(--g)}
+main{padding:14px;max-width:1200px;margin:auto}
+.view{display:none}.view.on{display:block}
+.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:14px}
+.kpi b{display:block;font-size:28px}
+.btn{border:0;border-radius:9px;background:var(--g2);color:white;padding:9px 12px;font-weight:700}
+.btn2{background:white;color:var(--g);border:1px solid var(--line)}
+input,select,textarea{width:100%;padding:9px;border:1px solid var(--line);border-radius:8px;background:white}
+label{display:block;font-weight:700;margin:9px 0 4px}
+table{width:100%;border-collapse:collapse;background:#fff}
+th,td{padding:9px;border-bottom:1px solid var(--line);text-align:left}
+.status{padding:4px 7px;border-radius:99px;font-size:11px;font-weight:800}
+.ok{background:#dff4e7;color:#17603a}
+.warn{background:#fff0c9;color:#805900}
+.bad{background:#ffe0e0;color:#962f2f}
+.modal{display:none;position:fixed;inset:0;background:#0007;z-index:50;place-items:center}
+.modal.on{display:grid}
+.box{background:#fff;border-radius:14px;padding:18px;width:min(700px,94vw);max-height:90vh;overflow:auto}
+.bottom{display:none}
+
+@media(max-width:700px){
+.grid{grid-template-columns:1fr 1fr}
+.nav{top:60px}
+.bottom{display:flex;position:fixed;bottom:0;left:0;right:0;background:white;border-top:1px solid var(--line);z-index:20;justify-content:space-around}
+.bottom button{border:0;background:white;padding:10px 7px;font-size:10px}
+main{padding-bottom:65px}
+th:nth-child(3),td:nth-child(3){display:none}
+}
+</style>
+</head>
+
+<body>
+<header>
+<div class="brand">
+🔥 OLD PILOTAGE
+<small>Saint-Privat-des-Vieux · campagne 2026-2027</small>
+</div>
+</header>
+
+<div class="nav" id="topnav"></div>
+
+<main>
+
+<section id="home" class="view on">
+<h2>Tableau de bord</h2>
+<div class="grid" id="kpis"></div>
+
+<div class="card" style="margin-top:10px">
+<h3>Prochaines actions</h3>
+<div id="actions"></div>
+</div>
+</section>
+
+<section id="
+<section id="models" class="view">
+<h2>Modèles & courriers</h2>
+
+<div class="card">
+<label>Modèle</label>
+<select id="tpl" onchange="letter()">
+<option>Information initiale</option>
+<option>Avis de contrôle</option>
+<option>Relance après contrôle</option>
+<option>Notification de conformité</option>
+</select>
+
+<label>Dossier</label>
+<select id="lcase" onchange="letter()"></select>
+
+<div id="preview"
+class="card"
+style="margin-top:10px;white-space:pre-wrap">
+</div>
+
+<p>
+<button class="btn" onclick="printLetter()">
+Imprimer / PDF
+</button>
+</p>
+</div>
+</section>
+
+
+<section id="admin" class="view">
+<h2>Administration</h2>
+
+<div class="grid">
+
+<div class="card">
+<h3>Administrateur</h3>
+<p>Paramétrage général et gestion des droits.</p>
+</div>
+
+<div class="card">
+<h3>Police municipale</h3>
+<p>Contrôles terrain, constats et procès-verbaux.</p>
+</div>
+
+<div class="card">
+<h3>Services techniques</h3>
+<p>OLD communales, interventions et travaux.</p>
+</div>
+
+<div class="card">
+<h3>Élus / lecture</h3>
+<p>Consultation des dossiers et pilotage de la campagne.</p>
+function renderCases(){
+
+let z=(q.value||'').toLowerCase();
+
+rows.innerHTML=
+
+cases
+
+.filter(x=>
+JSON.stringify(x)
+.toLowerCase()
+.includes(z)
+)
+
+.map(x=>
+
+`<tr>
+
+<td>
+<b>${x.ref}</b>
+</td>
+
+<td>
+${x.owner}
+</td>
+
+<td>
+${x.addr}
+</td>
+
+<td>
+${x.type}
+</td>
+
+<td>
+${badge(x.status)}
+</td>
+
+<td>
+<button
+class="btn btn2"
+onclick="advance(${x.id})">
+Étape +
+</button>
+</td>
+
+</tr>`
+
+).join('');
+
+}
+
+
+function advance(id){
+
+let c=
+cases.find(
+x=>x.id===id
+);
+
+let flow=[
+'À contrôler',
+'Information envoyée',
+'Conforme'
+];
+
+let position=
+flow.indexOf(c.status);
+
+if(position===-1){
+position=0;
+}
+
+c.status=
+flow[
+(position+1)%flow.length
+];
+
+save();
+
+}
+
+
+function openNew(){
+
+newmodal
+.classList
+.add('on');
+
+}
+
+
+function addCase(){
+
+let dossier
